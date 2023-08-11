@@ -6,7 +6,7 @@ from django.db import models
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=11)
+    phone = models.CharField(max_length=12)
     # first_name = models.CharField(max_length=200)
     # last_name = models.CharField(max_length=200)
     # email = models.EmailField(unique=True)
@@ -64,7 +64,7 @@ class BookInstance(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     date_borrow = models.DateField(auto_now_add=True)
-    date_return = models.DateField(auto_now_add=True)
+    date_return = models.DateField(auto_now_add=False)
 
 
 class ReviewModel(models.Model):

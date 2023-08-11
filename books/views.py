@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Author, Book, ReviewModel
+from .models import Author, Book, ReviewModel, BookInstance
 from .serializers import AuthorSerializer, CreateBooKSerializer, BooKSerializer, CreateAuthorSerializer, \
     ReviewSerializer, BookInstanceSerializer
 
@@ -20,16 +20,27 @@ from .serializers import AuthorSerializer, CreateBooKSerializer, BooKSerializer,
 
 
 class BookViewSet(ModelViewSet):
-    queryset = Book.objects.all()
+    # queryset = Book.objects.all()
     serializer_class = BooKSerializer
 
-    # def get_serializer_context(self):
-    #     return {'request': self.request}
+    def get_queryset(self):
+        queryset = Book.objects.all()
+        author_id = self.request.query_params.get("author_id")
+        if author_id is not None:
+            queryset = queryset.filter(author_id=author_id)
+        return queryset
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
-class BookInstanceViewSet(ModelViewSet):
+class BookInstanceAPIView(ListCreateAPIView):
     serializer_class = BookInstanceSerializer
-    queryset = Book.objects.get(book_id=self.kwargs["book_pk"])
+    # queryset = BookInstance.objects.all()
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+    # queryset = BookInstanceSerializer.objects.get(book_id=self.kwargs["book_pk"])
 
 
 class ReviewViewSet(ModelViewSet):

@@ -4,20 +4,25 @@ from rest_framework_nested import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register("books", views.BookViewSet)
+router.register("books", views.BookViewSet, basename="books")
 router.register('authors', views.AuthorViewSet)
 router.register('reviews', views.ReviewViewSet, basename='reviews')
-router.register('book-instance', views.BookInstanceViewSet, basename="book-instance")
+# router.register('book-instance', views.BookInstanceViewSet, basename="book-instance")
 
 books_routers = routers.NestedDefaultRouter(router, "books", lookup='book')
 books_routers.register('reviews', views.ReviewViewSet, basename='book-review')
 
 
-books_instance_routers = routers.NestedDefaultRouter(router, "book_instance", lookup="borrow")
-books_instance_routers.register('book_instance', views.BookInstanceViewSet, basename='borrow-book')
+# books_instance_routers = routers.NestedDefaultRouter(router, "book_instance", lookup="borrow")
+# books_instance_routers.register('book_instance', views.BookInstanceViewSet, basename='borrow-book')
 
 
-urlpatterns = router.urls + books_routers.urls + books_instance_routers.urls
+urlpatterns = [
+    path("", include(router.urls)),
+    path("", include(books_routers.urls)),
+    path("bookinstance/", views.BookInstanceAPIView.as_view())
+
+]
 
 
 # urlpatterns = [

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Book, Author, ReviewModel
+from .models import Book, Author, ReviewModel, BookInstance
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -27,8 +27,11 @@ class BooKSerializer(serializers.ModelSerializer):
 
 class BookInstanceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ReviewModel
-        fields = ["user", 'book', "price", "date_borrow", "date_return"]
+        model = BookInstance
+        fields = ["user", 'book', "price", "date_return"]
+
+    # def create(self, validated_data):
+    #     return BookInstance.objects.create(borrow_id=self.context["borrow_id"], **validated_data)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
