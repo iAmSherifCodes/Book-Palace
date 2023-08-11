@@ -6,12 +6,19 @@ from . import views
 router = routers.DefaultRouter()
 router.register("books", views.BookViewSet)
 router.register('authors', views.AuthorViewSet)
-router.register('reviews', views.ReviewViewSet)
+router.register('reviews', views.ReviewViewSet, basename='reviews')
+router.register('book-instance', views.BookInstanceViewSet, basename="book-instance")
 
 books_routers = routers.NestedDefaultRouter(router, "books", lookup='book')
 books_routers.register('reviews', views.ReviewViewSet, basename='book-review')
 
-urlpatterns = router.urls + books_routers.urls
+
+books_instance_routers = routers.NestedDefaultRouter(router, "book_instance", lookup="borrow")
+books_instance_routers.register('book_instance', views.BookInstanceViewSet, basename='borrow-book')
+
+
+urlpatterns = router.urls + books_routers.urls + books_instance_routers.urls
+
 
 # urlpatterns = [
 #     path('books/', include(router.urls)),

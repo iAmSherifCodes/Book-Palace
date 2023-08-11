@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Book, Author, ReviewModel
 
 
@@ -6,7 +7,7 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         # fields = ['first_name']
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['id', 'first_name', 'last_name', 'email']
 
 
 class BooKSerializer(serializers.ModelSerializer):
@@ -24,7 +25,13 @@ class BooKSerializer(serializers.ModelSerializer):
     # )
 
 
-class ReviewSerializer(serializers.Serializer):
+class BookInstanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewModel
+        fields = ["user", 'book', "price", "date_borrow", "date_return"]
+
+
+class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReviewModel
         fields = ["id", "name", "description"]

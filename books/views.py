@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Author, Book, ReviewModel
-from .serializers import AuthorSerializer, CreateBooKSerializer, BooKSerializer, CreateAuthorSerializer, ReviewSerializer
+from .serializers import AuthorSerializer, CreateBooKSerializer, BooKSerializer, CreateAuthorSerializer, \
+    ReviewSerializer, BookInstanceSerializer
 
 
 # from .models import Author
@@ -26,9 +27,17 @@ class BookViewSet(ModelViewSet):
     #     return {'request': self.request}
 
 
+class BookInstanceViewSet(ModelViewSet):
+    serializer_class = BookInstanceSerializer
+    queryset = Book.objects.get(book_id=self.kwargs["book_pk"])
+
+
 class ReviewViewSet(ModelViewSet):
-    queryset = ReviewModel.objects.all()
+    # queryset = ReviewModel.objects.all()
     serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        return ReviewModel.objects.filter(book_id=self.kwargs['book_pk'])
 
     def get_serializer_context(self):
         return {'book_id': self.kwargs['book_pk']}
