@@ -3,12 +3,17 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.pagination import PageNumberPagination
 # from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import SearchFilter, OrderingFilter
 
+from .filters import CustomFilter
 from .models import Author, Book, ReviewModel, BookInstance
+from .pagination import CustomPagination
 from .serializers import AuthorSerializer, CreateBooKSerializer, BooKSerializer, CreateAuthorSerializer, \
     ReviewSerializer, BookInstanceSerializer
 
@@ -20,15 +25,28 @@ from .serializers import AuthorSerializer, CreateBooKSerializer, BooKSerializer,
 
 
 class BookViewSet(ModelViewSet):
-    # queryset = Book.objects.all()
+    queryset = Book.objects.all()
+    # pagination_class = PageNumberPagination
+    pagination_class = CustomPagination
     serializer_class = BooKSerializer
 
-    def get_queryset(self):
-        queryset = Book.objects.all()
-        author_id = self.request.query_params.get("author_id")
-        if author_id is not None:
-            queryset = queryset.filter(author_id=author_id)
-        return queryset
+
+
+    search_fields = ['genre', 'isbn']
+
+    # django filter helps to filter objects by their fields
+    # "author__first_name" to filter author foreign key by
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = CustomFilter
+
+    # filterset_fields = ['author_id', 'title', 'author__first_name']
+
+    # def get_queryset(self):
+    #     queryset = Book.objects.all()
+    #     author_id = self.request.query_params.get("author_id")
+    #     if author_id is not None:
+    #         queryset = queryset.filter(author_id=author_id)
+    #     return queryset
 
     def get_serializer_context(self):
         return {'request': self.request}
